@@ -1,13 +1,26 @@
 import React from 'react'
-import { pure } from 'recompose'
 import { Link } from 'react-router'
+import { compose, withHandlers, pure } from 'recompose'
 
-const Article = ({ title, content, id }) => (
+const Article = ({ title, content, id, onClick }) => (
   <div>
+    <h2>{title}</h2>
+    <hr />
     <div>
-      <Link to={`articles/${id}`}>{title}</Link>
+      {content}
+    </div>
+    <div>
+      <Link to={`/articles/${id}/edit`} ><button>Edit</button></Link>
+      <button onClick={onClick}>Delete</button>
     </div>
   </div>
 )
 
-export default pure(Article)
+export default compose(
+  withHandlers({
+    onClick: ({ id, deleteArticle }) => event => {
+      deleteArticle({ id })
+    },
+  }),
+  pure,
+)(Article)

@@ -3,6 +3,16 @@ import React, { Component } from 'react'
 const withForm = fields => WrappedComponent => class extends Component {
   state = fields.reduce((result, field) => ({ ...result, [field]: '' }), {})
 
+  componentWillReceiveProps(nextProps) {
+    const newState =
+      Object.keys(this.state).reduce(
+        (result, key) => ({ ...result, [key]: nextProps[key] }),
+        {}
+      )
+
+    this.setState(newState)
+  }
+
   getFields() {
     return Object.keys(this.state).reduce(
       (fields, field) => ({

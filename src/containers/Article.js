@@ -1,26 +1,46 @@
 import React, { Component } from 'react';
-import Form from '../components/Form'
+import { browserHistory } from 'react-router'
+import Article from '../components/Article'
 
 class ArticleContainer extends Component {
 
   static API_ENDPOINT = 'http://localhost:8000/article'
 
-  saveArticle = (fields) => {
-    console.log(fields);
-    fetch(this.constructor.API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(fields)
+  state = {
+    article: {},
+  }
+
+  componentDidMount() {
+    const params = this.props.routeParams;
+    this.loadArticle(params)
+  }
+
+  setArticle = (article) => {
+    this.setState({
+      article,
     })
+  }
+
+  loadArticle = ({ id }) => {
+    fetch(`${this.constructor.API_ENDPOINT}/${id}`)
+      .then(article => article.json())
+      .then(article => this.setArticle(article))
+  }
+
+  redirectToBaseArticle = () => {
+    browserHistory.push('/articles')
+  }
+
+  deleteArticle = ({ id }) => {
+    fetch(`${this.constructor.API_ENDPOINT}/${id}`, {
+      method: 'DELETE'
+    }).then(this.redirectToBaseArticle)
   }
 
   render() {
     return (
       <div>
-        <Form saveArticle={this.saveArticle} />
+        <Article {...this.state.article} deleteArticle={this.deleteArticle} />
       </div>
     );
   }
